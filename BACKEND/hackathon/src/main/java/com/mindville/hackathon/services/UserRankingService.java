@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 public class UserRankingService {
 
     private final UserRankingRepository repository;
+    private final ClassroomService classroomService;
 
-    public UserRankingService(UserRankingRepository repository) {
+    public UserRankingService(UserRankingRepository repository, ClassroomService classroomService) {
         this.repository = repository;
+        this.classroomService = classroomService;
     }
 
     public List<UserRankingDTO> getAll() {
@@ -78,5 +80,14 @@ public class UserRankingService {
         userRanking.setWeeklyPoints(currentPoints + 1);
 
         return repository.save(userRanking);
+    }
+
+    public UserRankingDTO joinClassRoom(Long id, String passWord) {
+        UserRanking user = new UserRanking();
+        user.setClassroomId(classroomService.getByPassword(passWord).getId());
+        user.setGeneralPoints(0);
+        user.setWeeklyPoints(0);
+        user.setStudentId(id);
+        return new UserRankingDTO(repository.save(user));
     }
 }

@@ -60,4 +60,8 @@ public class ClassroomService {
         classroom.setTeacherId(dto.getTeacherId());
         return classroom;
     }
+
+    public Classroom getByPassword (String password) {
+        return repository.findByPassword(password);
+    }
 }

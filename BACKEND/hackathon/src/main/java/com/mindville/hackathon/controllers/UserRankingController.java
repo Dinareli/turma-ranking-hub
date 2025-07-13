@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/user-rankings")
@@ -58,4 +61,12 @@ public class UserRankingController {
         UserRanking updated = service.incrementWeeklyPoints(id);
         return ResponseEntity.ok(updated);
     }
+
+    @PostMapping("/{id}/{passWord}")
+    public ResponseEntity<UserRankingDTO> joinClassRoom(@PathVariable Long id, @PathVariable String passWord) {
+        UserRankingDTO updated = service.joinClassRoom(id, passWord);
+        
+        return ResponseEntity.ok(updated);
+    }
+    
 }

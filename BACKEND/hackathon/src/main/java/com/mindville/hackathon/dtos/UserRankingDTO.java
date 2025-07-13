@@ -1,5 +1,9 @@
 package com.mindville.hackathon.dtos;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+
+import com.mindville.hackathon.models.UserRanking;
+
 public class UserRankingDTO {
     private Long id;
     private Long studentId;
@@ -45,5 +49,17 @@ public class UserRankingDTO {
 
     public void setGeneralPoints(Integer generalPoints) {
         this.generalPoints = generalPoints;
+    }
+
+    public UserRankingDTO(UserRanking userRanking) {
+        this.id = userRanking.getId();
+        this.studentId = userRanking.getStudentId();
+        this.classroomId = userRanking.getClassroomId();
+        this.weeklyPoints = userRanking.getWeeklyPoints();
+        this.generalPoints = userRanking.getGeneralPoints();
+    }
+
+    public UserRankingDTO() {
+        // Default constructor
     }
 }
