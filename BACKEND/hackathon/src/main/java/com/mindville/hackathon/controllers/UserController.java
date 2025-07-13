@@ -1,9 +1,12 @@
 package com.mindville.hackathon.controllers;
 
 import com.mindville.hackathon.dtos.UserDTO;
+import com.mindville.hackathon.dtos.UserLoginDTO;
 import com.mindville.hackathon.models.UserModel;
 import com.mindville.hackathon.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,5 +43,14 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
-}
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDTO userDto) {
+        try {
+            UserDTO user = userService.login(userDto);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+}

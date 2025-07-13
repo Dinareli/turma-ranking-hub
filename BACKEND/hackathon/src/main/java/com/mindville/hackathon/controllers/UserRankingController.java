@@ -1,6 +1,7 @@
 package com.mindville.hackathon.controllers;
 
 import com.mindville.hackathon.dtos.UserRankingDTO;
+import com.mindville.hackathon.models.UserRanking;
 import com.mindville.hackathon.services.UserRankingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

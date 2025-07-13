@@ -1,5 +1,6 @@
 package com.mindville.hackathon.services;
 
+import com.mindville.hackathon.dtos.UserLoginDTO;
 import com.mindville.hackathon.dtos.UserDTO;
 import com.mindville.hackathon.models.UserModel;
 import com.mindville.hackathon.repositories.UserRepository;
@@ -47,6 +48,17 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public UserDTO login(UserLoginDTO userDto) {
+        UserModel user = userRepository.findByEmail(userDto.getEmail());
+        if (user == null) {
+            throw new RuntimeException("Email not found");
+        }
+        if(!user.getPassword().equals(userDto.getPassword())){
+            throw new RuntimeException("Email not found");
+        }
+        return toDTO(user);
     }
 
     private UserDTO toDTO(UserModel user) {
