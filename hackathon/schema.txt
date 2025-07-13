@@ -1,0 +1,37 @@
+table User {
+    id
+    name
+    email
+    password
+    created_at
+    updated_at
+    role = ["admin", "student", "teacher"]
+}
+
+table Classroom {
+    id  
+    name
+    password
+    created_at
+    updated_at
+    teacher_id
+}
+
+table UserRanking {
+    id
+    student_id
+    classroom_id
+    weeklyPoints 
+    generalPoints
+    created_at
+}
+
+**Prioritário
+- User.teacher cadastra Classroom
+- User.student se registra na Classroom
+- UserRanking é criado quando o User.student se registra na Classroom
+- Cron execuntando todo final de semana para somar UserRanking.weeklyPoints à UserRanking.generalPoints e zerar a mesma
+- Classroom deletada deleta UserRanking atrelado
+
+**Adicional
+- Admin designa novo User.teacher para Classroom em caso de demissão
