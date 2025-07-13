@@ -2,14 +2,15 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { User } from '@/types/auth';
+import { UserRankings } from '@/types/UserRankings';
 import { Trophy, Medal, Award, Star } from 'lucide-react';
 
 interface RankingTableProps {
-  students: User[];
+  rankings: UserRankings[];
   currentUser: User;
 }
 
-export const RankingTable: React.FC<RankingTableProps> = ({ students, currentUser }) => {
+export const RankingTable: React.FC<RankingTableProps> = ({ rankings, currentUser }) => {
   const getRankIcon = (position: number) => {
     switch (position) {
       case 1:
@@ -29,25 +30,25 @@ export const RankingTable: React.FC<RankingTableProps> = ({ students, currentUse
     return 'outline';
   };
 
-  const isCurrentUser = (student: User) => student.id === currentUser.id;
+  const isCurrentUser = (ranking: UserRankings) => ranking.studentId === Number(currentUser.id);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-6 w-6" />
-          Ranking da Turma {students[0]?.classCode}
+          Ranking da Turma {currentUser.classCode}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {students.map((student, index) => {
+          {rankings.map((ranking, index) => {
             const position = index + 1;
-            const isUser = isCurrentUser(student);
+            const isUser = isCurrentUser(ranking);
             
             return (
               <div
-                key={student.id}
+                key={ranking.id}
                 className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
                   isUser 
                     ? 'bg-gradient-primary text-primary-foreground shadow-primary/20 shadow-lg transform scale-105' 
@@ -68,13 +69,13 @@ export const RankingTable: React.FC<RankingTableProps> = ({ students, currentUse
                     {getRankIcon(position)}
                     <div>
                       <h3 className={`font-semibold ${isUser ? 'text-primary-foreground' : 'text-foreground'}`}>
-                        {student.name}
+                        {ranking.studentName}
                         {isUser && (
                           <span className="ml-2 text-xs font-normal opacity-80">(Você)</span>
                         )}
                       </h3>
                       <p className={`text-sm ${isUser ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                        {student.email}
+                        ID: {ranking.studentId}
                       </p>
                     </div>
                   </div>
@@ -82,10 +83,10 @@ export const RankingTable: React.FC<RankingTableProps> = ({ students, currentUse
 
                 <div className="text-right">
                   <div className={`text-2xl font-bold ${isUser ? 'text-primary-foreground' : 'text-foreground'}`}>
-                    {student.score}
+                    {ranking.weeklyPoints}
                   </div>
                   <div className={`text-xs ${isUser ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                    pontos
+                    pontos semanais
                   </div>
                 </div>
               </div>
@@ -93,7 +94,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({ students, currentUse
           })}
         </div>
 
-        {students.length === 0 && (
+        {rankings.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             <Trophy className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>Nenhum aluno encontrado nesta turma.</p>
