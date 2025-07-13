@@ -1,17 +1,44 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8" />
   <title>Minha Extensão</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      width: 250px;
+      font-family: Arial, sans-serif;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+  </style>
 </head>
+
 <body>
   <div id="container">
-    <input type="text" id="email">
-    <input type="password" id="password">
+    <h3>Mind.Ranking</h3>
+    <label>Email</label>
+    <input type="text" id="email" placeholder="johndoe@gmail.com">
+    <label>Senha</label>
+    <input type="password" id="password" placeholder="********">
     <button id="loginBtn">Acessar</button>
     <div id="output"></div>
   </div>
   <script src="popup.js"></script>
 </body>
+
 </html>

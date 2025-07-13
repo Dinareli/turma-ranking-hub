@@ -18,6 +18,9 @@
     "128": "icon.png"
   },
   "host_permissions": [
-    "https://www.youtube.com/"
-  ]
+    "https://www.mbanobrainer.com/"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }
