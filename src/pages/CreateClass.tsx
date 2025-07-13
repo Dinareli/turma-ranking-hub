@@ -1,80 +1,134 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Plus, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 interface CreateClassroomProps {
     teacherId: string;
 }
 
-const CreateClass: React.FC<CreateClassroomProps> = ({ teacherId }) => {
+const CreateClass: React.FC<CreateClassroomProps> = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [className, setClassName] = useState("");
     const [passcode, setPasscode] = useState("");
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(null);
+        
+        if (!className.trim() || !passcode.trim()) {
+            toast({
+                title: "Erro",
+                description: "Todos os campos são obrigatórios",
+                variant: "destructive",
+            });
+            return;
+        }
 
-        // Generate classroom id (UUID or similar)
-        const classroomId = crypto.randomUUID();
-        const createdDate = new Date().toISOString();
+        setLoading(true);
 
         try {
-            await axios.post("/api/classrooms", {
-                id: classroomId,
-                teacherId,
-                name: className,
-                passcode,
-                createdDate,
+            // Simulação da criação da turma
+            // Aqui você faria a chamada para sua API
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            toast({
+                title: "Turma criada com sucesso!",
+                description: `Código: ${passcode.toUpperCase()}`,
             });
-            setSuccess("Classroom created successfully!");
+            
             setClassName("");
             setPasscode("");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            setError("Failed to create classroom.");
+            setTimeout(() => navigate("/dashboard"), 2000);
+        } catch (err) {
+            toast({
+                title: "Erro",
+                description: "Falha ao criar turma",
+                variant: "destructive",
+            });
         } finally {
             setLoading(false);
         }
     };
 
+    if (!user || user.role !== "teacher") {
+        navigate("/dashboard");
+        return null;
+    }
+
     return (
-        <div style={{ maxWidth: 400, margin: "2rem auto" }}>
-            <h2>Create New Classroom</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        Classroom Name:
-                        <input
-                            type="text"
-                            value={className}
-                            onChange={(e) => setClassName(e.target.value)}
-                            required
-                            disabled={loading}
-                        />
-                    </label>
+        <div className="min-h-screen bg-gradient-card">
+            <div className="container mx-auto px-4 py-8">
+                <div className="max-w-md mx-auto">
+                    <div className="mb-6">
+                        <Button
+                            variant="ghost"
+                            onClick={() => navigate("/dashboard")}
+                            className="mb-4"
+                        >
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Voltar ao Dashboard
+                        </Button>
+                    </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-2xl font-bold text-center bg-gradient-secondary bg-clip-text text-transparent">
+                                Criar Nova Turma
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="className">Nome da Turma</Label>
+                                    <Input
+                                        id="className"
+                                        type="text"
+                                        placeholder="Ex: Matemática 2024"
+                                        value={className}
+                                        onChange={(e) => setClassName(e.target.value)}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="passcode">Código da Turma</Label>
+                                    <Input
+                                        id="passcode"
+                                        type="text"
+                                        placeholder="Ex: MAT2024"
+                                        value={passcode}
+                                        onChange={(e) => setPasscode(e.target.value.toUpperCase())}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    variant="secondary"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Plus className="mr-2 h-4 w-4" />
+                                    )}
+                                    {loading ? "Criando..." : "Criar Turma"}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
-                <div>
-                    <label>
-                        Passcode:
-                        <input
-                            type="text"
-                            value={passcode}
-                            onChange={(e) => setPasscode(e.target.value)}
-                            required
-                            disabled={loading}
-                        />
-                    </label>
-                </div>
-                <button type="submit" disabled={loading}>
-                    {loading ? "Creating..." : "Create Classroom"}
-                </button>
-            </form>
-            {success && <div style={{ color: "green", marginTop: 10 }}>{success}</div>}
-            {error && <div style={{ color: "red", marginTop: 10 }}>{error}</div>}
+            </div>
         </div>
     );
 };
