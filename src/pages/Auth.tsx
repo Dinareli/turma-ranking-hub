@@ -1,14 +1,23 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LoginForm } from '@/components/LoginForm';
-import { RegisterForm } from '@/components/RegisterForm';
-import { GraduationCap, BookOpen, Trophy } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { LoginForm } from "@/components/LoginForm";
+import { RegisterForm } from "@/components/RegisterForm";
+import { GraduationCap, BookOpen, Trophy } from "lucide-react";
+import RoleRedirect from "../RoleRedirect";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Se já estiver logado, redireciona conforme o papel
+  if (user) {
+    return <RoleRedirect />;
+  }
 
   const handleAuthSuccess = () => {
-    navigate('/dashboard');
+    // Após login/cadastro, RoleRedirect será chamado automaticamente
+    // pois o estado user será atualizado
   };
 
   return (
@@ -25,7 +34,8 @@ export const Auth: React.FC = () => {
             Turma Ranking Hub
           </h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Acompanhe seu progresso e veja como você está no ranking da sua turma
+            Acompanhe seu progresso e veja como você está no ranking da sua
+            turma
           </p>
         </div>
 

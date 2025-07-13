@@ -7,10 +7,12 @@ import com.mindville.hackathon.models.UserRanking;
 public class UserRankingDTO {
     private Long id;
     private Long studentId;
+    private String studentName;
     private Long classroomId;
     private Integer weeklyPoints;
     private Integer generalPoints;
 
+    
     public Long getId() {
         return id;
     }
@@ -61,5 +63,13 @@ public class UserRankingDTO {
 
     public UserRankingDTO() {
         // Default constructor
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 }

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { User, AuthContextType } from "@/types/auth";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
+import { UserRankings } from "@/types/UserRankings";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -10,7 +11,10 @@ type RegisterOptions = { role?: "student" | "teacher" | "admin" };
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -25,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const foundUser = await api.login(email, password);
     if (foundUser) {
       setUser(foundUser);
+      localStorage.setItem("user", JSON.stringify(foundUser));
       toast({
         title: "Login realizado!",
         description: `Bem-vindo(a), ${foundUser.name}!`,
@@ -55,12 +60,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         role: options?.role || "student",
       });
       setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
       toast({
         title: "Cadastro realizado!",
         description: `Bem-vindo(a) à ${classCode}, ${name}!`,
       });
       return true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       toast({
         title: "Erro no cadastro",
@@ -73,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("user");
     toast({
       title: "Logout realizado",
       description: "Até logo!",
@@ -140,18 +147,17 @@ export const useAuth = () => {
 };
 
 export const useClassRanking = (classCode: string) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [rankings, setRankings] = useState<UserRankings[]>([]);
 
   useEffect(() => {
     api
-      .getAll()
-      .then(setUsers)
-      .catch(() => setUsers([]));
+      .getAllRanking(classCode)
+      .then(setRankings)
+      .catch(() => setRankings([]));
   }, []);
 
-  const classUsers = users
-    .filter((user) => user.classCode === classCode)
-    .sort((a, b) => b.score - a.score);
+  const formattedRankings = rankings
+    .sort((a, b) => b.weeklyPoints - a.weeklyPoints);
 
-  return classUsers;
+  return formattedRankings;
 };

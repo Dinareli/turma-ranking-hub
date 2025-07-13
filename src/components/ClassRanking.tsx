@@ -54,18 +54,15 @@ export const ClassRanking: React.FC<ClassRankingProps> = ({ classCode }) => {
                 {getRankIcon(position)}
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    {student.name}
+                    {student.studentName}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {student.email}
-                  </p>
                 </div>
               </div>
             </div>
 
             <div className="text-right">
               <div className="text-2xl font-bold text-foreground">
-                {student.score}
+                {student.weeklyPoints}
               </div>
               <div className="text-xs text-muted-foreground">
                 pontos

@@ -8,7 +8,13 @@ import { useToast } from "@/hooks/use-toast";
 import { api, classroomApi, Classroom } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Eye } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ClassRanking } from "@/components/ClassRanking";
 
 export const Teacher = () => {
@@ -63,7 +69,7 @@ export const Teacher = () => {
 
   const handleStudentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate class code
     const isValidCode = await validateClassCode(studentForm.classCode);
     if (!isValidCode) {
@@ -95,9 +101,13 @@ export const Teacher = () => {
   const handleClassroomSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) return;
-    
+
     try {
-      await classroomApi.create(classroomForm.name, classroomForm.password, Number(user.id));
+      await classroomApi.create(
+        classroomForm.name,
+        classroomForm.password,
+        Number(user.id)
+      );
       toast({
         title: "Turma cadastrada com sucesso!",
         description: `Código gerado: ${classroomForm.password}`,
@@ -131,8 +141,12 @@ export const Teacher = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-center mb-2">Painel do Professor</h1>
-          <p className="text-muted-foreground text-center">Bem-vindo, {user?.name}</p>
+          <h1 className="text-3xl font-bold text-center mb-2">
+            Painel do Professor
+          </h1>
+          <p className="text-muted-foreground text-center">
+            Bem-vindo, {user?.name}
+          </p>
         </div>
 
         <Tabs defaultValue="students" className="w-full">
@@ -154,7 +168,9 @@ export const Teacher = () => {
                     <Input
                       id="student-name"
                       value={studentForm.name}
-                      onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })}
+                      onChange={(e) =>
+                        setStudentForm({ ...studentForm, name: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -164,7 +180,12 @@ export const Teacher = () => {
                       id="student-email"
                       type="email"
                       value={studentForm.email}
-                      onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
+                      onChange={(e) =>
+                        setStudentForm({
+                          ...studentForm,
+                          email: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -174,7 +195,12 @@ export const Teacher = () => {
                       id="student-password"
                       type="password"
                       value={studentForm.password}
-                      onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })}
+                      onChange={(e) =>
+                        setStudentForm({
+                          ...studentForm,
+                          password: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -183,7 +209,12 @@ export const Teacher = () => {
                     <Input
                       id="student-class"
                       value={studentForm.classCode}
-                      onChange={(e) => setStudentForm({ ...studentForm, classCode: e.target.value })}
+                      onChange={(e) =>
+                        setStudentForm({
+                          ...studentForm,
+                          classCode: e.target.value,
+                        })
+                      }
                       placeholder="Digite o código da turma"
                       required
                     />
@@ -208,7 +239,12 @@ export const Teacher = () => {
                     <Input
                       id="classroom-name"
                       value={classroomForm.name}
-                      onChange={(e) => setClassroomForm({ ...classroomForm, name: e.target.value })}
+                      onChange={(e) =>
+                        setClassroomForm({
+                          ...classroomForm,
+                          name: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -218,17 +254,30 @@ export const Teacher = () => {
                       <Input
                         id="classroom-password"
                         value={classroomForm.password}
-                        onChange={(e) => setClassroomForm({ ...classroomForm, password: e.target.value })}
+                        onChange={(e) =>
+                          setClassroomForm({
+                            ...classroomForm,
+                            password: e.target.value,
+                          })
+                        }
                         placeholder="Código será gerado automaticamente"
                         required
                         readOnly
                       />
-                      <Button type="button" onClick={generateClassCode} variant="outline">
+                      <Button
+                        type="button"
+                        onClick={generateClassCode}
+                        variant="outline"
+                      >
                         Gerar Código
                       </Button>
                     </div>
                   </div>
-                  <Button type="submit" className="w-full" disabled={!classroomForm.password}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={!classroomForm.password}
+                  >
                     Cadastrar Turma
                   </Button>
                 </form>
@@ -249,7 +298,10 @@ export const Teacher = () => {
                     </p>
                   ) : (
                     classrooms.map((classroom) => (
-                      <div key={classroom.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div
+                        key={classroom.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
                         <div>
                           <h3 className="font-medium">{classroom.name}</h3>
                           <p className="text-sm text-muted-foreground">
@@ -265,9 +317,11 @@ export const Teacher = () => {
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl">
                             <DialogHeader>
-                              <DialogTitle>Ranking - {classroom.name}</DialogTitle>
+                              <DialogTitle>
+                                Ranking - {classroom.name}
+                              </DialogTitle>
                             </DialogHeader>
-                            <ClassRanking classCode={classroom.password} />
+                            <ClassRanking classCode={String(classroom.id)} />
                           </DialogContent>
                         </Dialog>
                       </div>
