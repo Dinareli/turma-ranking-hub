@@ -86,4 +86,13 @@ export const classroomApi = {
     const res = await axios.get<Classroom[]>(CLASSROOM_API_URL);
     return res.data;
   },
+
+  async update(id: number, updates: Partial<Classroom>): Promise<Classroom> {
+    const res = await axios.put<Classroom>(`${CLASSROOM_API_URL}/${id}`, updates);
+    return res.data;
+  },
+
+  async delete(id: number): Promise<void> {
+    await axios.delete(`${CLASSROOM_API_URL}/${id}`);
+  },
 };

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { CreateUserModal } from "@/components/CreateUserModal";
 import { CreateClassroomModal } from "@/components/CreateClassroomModal";
 import { EditUserModal } from "@/components/EditUserModal";
+import { EditClassroomModal } from "@/components/EditClassroomModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,9 +38,13 @@ export const Admin = () => {
   const [createStudentModal, setCreateStudentModal] = useState(false);
   const [createClassroomModal, setCreateClassroomModal] = useState(false);
   const [editUserModal, setEditUserModal] = useState(false);
+  const [editClassroomModal, setEditClassroomModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteClassroomDialogOpen, setDeleteClassroomDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [classroomToDelete, setClassroomToDelete] = useState<Classroom | null>(null);
 
   // Load data
   useEffect(() => {
@@ -64,6 +69,31 @@ export const Admin = () => {
 
   const teachers = users.filter(u => u.role === "teacher");
   const students = users.filter(u => u.role === "student");
+
+  const handleEditClassroom = (classroom: Classroom) => {
+    setSelectedClassroom(classroom);
+    setEditClassroomModal(true);
+  };
+
+  const handleDeleteClassroom = async (classroomId: number) => {
+    try {
+      await classroomApi.delete(classroomId);
+      toast({
+        title: "Turma excluída com sucesso!",
+      });
+      loadData();
+    } catch (error) {
+      toast({
+        title: "Erro ao excluir turma",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openDeleteClassroomDialog = (classroom: Classroom) => {
+    setClassroomToDelete(classroom);
+    setDeleteClassroomDialogOpen(true);
+  };
 
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
@@ -277,6 +307,7 @@ export const Admin = () => {
                       <TableHead>Código</TableHead>
                       <TableHead>Professor ID</TableHead>
                       <TableHead>Professor</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -289,6 +320,24 @@ export const Admin = () => {
                           <TableCell>{classroom.password}</TableCell>
                           <TableCell>{classroom.teacherId}</TableCell>
                           <TableCell>{teacher?.name || 'Professor não encontrado'}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleEditClassroom(classroom)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="destructive"
+                                onClick={() => openDeleteClassroomDialog(classroom)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       );
                     })}
@@ -331,6 +380,13 @@ export const Admin = () => {
           user={selectedUser}
           onSuccess={loadData}
         />
+        
+        <EditClassroomModal
+          open={editClassroomModal}
+          onOpenChange={setEditClassroomModal}
+          classroom={selectedClassroom}
+          onSuccess={loadData}
+        />
 
         {/* Delete Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -350,6 +406,33 @@ export const Admin = () => {
                     handleDeleteUser(userToDelete.id);
                     setDeleteDialogOpen(false);
                     setUserToDelete(null);
+                  }
+                }}
+              >
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Delete Classroom Dialog */}
+        <AlertDialog open={deleteClassroomDialogOpen} onOpenChange={setDeleteClassroomDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir a turma {classroomToDelete?.name}?
+                Esta ação não pode ser desfeita e irá afetar todos os alunos vinculados a esta turma.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (classroomToDelete) {
+                    handleDeleteClassroom(classroomToDelete.id);
+                    setDeleteClassroomDialogOpen(false);
+                    setClassroomToDelete(null);
                   }
                 }}
               >
