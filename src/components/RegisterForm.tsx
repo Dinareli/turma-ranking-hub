@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterForm as RegisterFormType } from "@/types/auth";
 import { Loader2, UserPlus } from "lucide-react";
+import { classroomApi } from "@/lib/api";
+import { toast } from "@/hooks/use-toast";
 
 interface RegisterFormProps {
   onSuccess: () => void;
@@ -62,12 +64,25 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
     setIsLoading(true);
     try {
+      // Verificar se o código da turma existe
+      const classroom = await classroomApi.getByPassword(formData.classCode.trim().toUpperCase());
+      
+      if (!classroom) {
+        toast({
+          title: "Código inválido",
+          description: "Código da turma não encontrado. Verifique com seu professor.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const success = await register(
         formData.name.trim(),
         formData.email,
         formData.password,
         formData.classCode.trim().toUpperCase(),
-        { role: "student" } // Added role parameter
+        { role: "student" }
       );
       if (success) {
         onSuccess();

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Plus, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { classroomApi } from "@/lib/api";
 
 interface CreateClassroomProps {
     teacherId: string;
@@ -34,9 +35,11 @@ const CreateClass: React.FC<CreateClassroomProps> = () => {
         setLoading(true);
 
         try {
-            // Simulação da criação da turma
-            // Aqui você faria a chamada para sua API
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (!user?.id) {
+                throw new Error("Usuário não encontrado");
+            }
+
+            await classroomApi.create(className, passcode, parseInt(user.id));
             
             toast({
                 title: "Turma criada com sucesso!",
@@ -49,7 +52,7 @@ const CreateClass: React.FC<CreateClassroomProps> = () => {
         } catch (err) {
             toast({
                 title: "Erro",
-                description: "Falha ao criar turma",
+                description: "Falha ao criar turma. Verifique se o código não já existe.",
                 variant: "destructive",
             });
         } finally {

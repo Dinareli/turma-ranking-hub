@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LogOut, User, Trophy, Users, TrendingUp } from "lucide-react";
+import { LogOut, User, Trophy, Users, TrendingUp, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const Dashboard: React.FC = () => {
@@ -111,11 +111,20 @@ export const Dashboard: React.FC = () => {
         {/* Ranking Table */}
         <RankingTable students={classStudents} currentUser={user} />
       </div>
-      <div className="fixed bottom-4 right-4">
-        <Button onClick={createNewClass} className="bg-primary text-white">
-          Criar Nova Turma
-        </Button>
-      </div>
+      
+      {/* Botão de criar turma apenas para professores */}
+      {user.role === "teacher" && (
+        <div className="fixed bottom-4 right-4">
+          <Button 
+            onClick={createNewClass} 
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            size="lg"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Criar Nova Turma
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
