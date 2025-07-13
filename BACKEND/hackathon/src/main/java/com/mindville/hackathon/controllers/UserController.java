@@ -3,6 +3,8 @@ package com.mindville.hackathon.controllers;
 import com.mindville.hackathon.dtos.UserDTO;
 import com.mindville.hackathon.dtos.UserLoginDTO;
 import com.mindville.hackathon.models.UserModel;
+import com.mindville.hackathon.repositories.UserRankingRepository;
+import com.mindville.hackathon.services.UserRankingService;
 import com.mindville.hackathon.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    
+    private UserRankingService userRankingRepository;
+
+    UserController(UserRankingService userRankingRepository) {
+        this.userRankingRepository = userRankingRepository;
+    }
 
     @GetMapping
     public List<UserDTO> getAllUsers() {
@@ -34,7 +42,10 @@ public class UserController {
 
     @PostMapping
     public UserDTO createUser(@RequestBody UserModel user) {
-        return userService.createUser(user);
+        UserDTO use = userService.createUser(user);
+        System.out.println("******************************" + use.id());
+        userRankingRepository.joinClassRoom(use.id(), user.getClassCode());
+        return use;
     }
 
     @PutMapping("/{id}")

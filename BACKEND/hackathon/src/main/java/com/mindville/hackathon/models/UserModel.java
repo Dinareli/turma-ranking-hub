@@ -24,6 +24,10 @@ public class UserModel {
 
     private LocalDateTime updatedAt;
 
+    private String classCode;
+
+    
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -89,5 +93,13 @@ public class UserModel {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getClassCode() {
+        return classCode;
+    }
+
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
     }
 }

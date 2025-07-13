@@ -99,6 +99,7 @@ public class UserRankingService {
     }
 
     public UserRankingDTO joinClassRoom(Long id, String passWord) {
+        System.out.println("******************************" + passWord);
         UserRanking user = new UserRanking();
         user.setClassroomId(classroomService.getByPassword(passWord).getId());
         user.setGeneralPoints(0);

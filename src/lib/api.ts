@@ -88,7 +88,10 @@ export const classroomApi = {
   },
 
   async update(id: number, updates: Partial<Classroom>): Promise<Classroom> {
-    const res = await axios.put<Classroom>(`${CLASSROOM_API_URL}/${id}`, updates);
+    const res = await axios.put<Classroom>(
+      `${CLASSROOM_API_URL}/${id}`,
+      updates
+    );
     return res.data;
   },
 
