@@ -2,43 +2,44 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { api, classroomApi, Classroom } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
+import { ArrowLeft, LogOut, Plus, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { CreateUserModal } from "@/components/CreateUserModal";
+import { CreateClassroomModal } from "@/components/CreateClassroomModal";
+import { EditUserModal } from "@/components/EditUserModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Admin = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
-
-  // Teacher form state
-  const [teacherForm, setTeacherForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  // Student form state
-  const [studentForm, setStudentForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    classCode: "",
-  });
-
-  // Classroom form state
-  const [classroomForm, setClassroomForm] = useState({
-    name: "",
-    password: "",
-  });
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   // Data states
   const [users, setUsers] = useState<User[]>([]);
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  
+  // Modal states
+  const [createTeacherModal, setCreateTeacherModal] = useState(false);
+  const [createStudentModal, setCreateStudentModal] = useState(false);
+  const [createClassroomModal, setCreateClassroomModal] = useState(false);
+  const [editUserModal, setEditUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   // Load data
   useEffect(() => {
@@ -64,64 +65,38 @@ export const Admin = () => {
   const teachers = users.filter(u => u.role === "teacher");
   const students = users.filter(u => u.role === "student");
 
-  const handleTeacherSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setEditUserModal(true);
+  };
+
+  const handleDeleteUser = async (userId: string) => {
     try {
-      await api.register({
-        ...teacherForm,
-        role: "teacher",
-        classCode: "",
-      });
+      await api.delete(userId);
       toast({
-        title: "Professor cadastrado com sucesso!",
+        title: "Usuário excluído com sucesso!",
       });
-      setTeacherForm({ name: "", email: "", password: "" });
       loadData();
     } catch (error) {
       toast({
-        title: "Erro ao cadastrar professor",
+        title: "Erro ao excluir usuário",
         variant: "destructive",
       });
     }
   };
 
-  const handleStudentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await api.register({
-        ...studentForm,
-        role: "student",
-      });
-      toast({
-        title: "Aluno cadastrado com sucesso!",
-      });
-      setStudentForm({ name: "", email: "", password: "", classCode: "" });
-      loadData();
-    } catch (error) {
-      toast({
-        title: "Erro ao cadastrar aluno",
-        variant: "destructive",
-      });
-    }
+  const openDeleteDialog = (user: User) => {
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
   };
 
-  const handleClassroomSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user?.id) return;
-    
-    try {
-      await classroomApi.create(classroomForm.name, classroomForm.password, Number(user.id));
-      toast({
-        title: "Turma cadastrada com sucesso!",
-      });
-      setClassroomForm({ name: "", password: "" });
-      loadData();
-    } catch (error) {
-      toast({
-        title: "Erro ao cadastrar turma",
-        variant: "destructive",
-      });
-    }
+  const handleBack = () => {
+    navigate('/dashboard');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
   };
 
   if (user?.role !== "admin") {
@@ -141,156 +116,37 @@ export const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10 p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <Button variant="outline" onClick={handleBack}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-center mb-2">Painel Administrativo</h1>
           <p className="text-muted-foreground text-center">Bem-vindo, {user?.name}</p>
         </div>
 
-        <Tabs defaultValue="teachers" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="teachers">Cadastrar Professores</TabsTrigger>
-            <TabsTrigger value="students">Cadastrar Alunos</TabsTrigger>
-            <TabsTrigger value="classrooms">Cadastrar Turmas</TabsTrigger>
-            <TabsTrigger value="list-teachers">Ver Professores</TabsTrigger>
-            <TabsTrigger value="list-students">Ver Alunos</TabsTrigger>
-            <TabsTrigger value="list-classrooms">Ver Turmas</TabsTrigger>
+        <Tabs defaultValue="list-teachers" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="list-teachers">Professores</TabsTrigger>
+            <TabsTrigger value="list-students">Alunos</TabsTrigger>
+            <TabsTrigger value="list-classrooms">Turmas</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="teachers">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cadastro de Professores</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleTeacherSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="teacher-name">Nome</Label>
-                    <Input
-                      id="teacher-name"
-                      value={teacherForm.name}
-                      onChange={(e) => setTeacherForm({ ...teacherForm, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="teacher-email">Email</Label>
-                    <Input
-                      id="teacher-email"
-                      type="email"
-                      value={teacherForm.email}
-                      onChange={(e) => setTeacherForm({ ...teacherForm, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="teacher-password">Senha</Label>
-                    <Input
-                      id="teacher-password"
-                      type="password"
-                      value={teacherForm.password}
-                      onChange={(e) => setTeacherForm({ ...teacherForm, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Cadastrar Professor
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="students">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cadastro de Alunos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleStudentSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="student-name">Nome</Label>
-                    <Input
-                      id="student-name"
-                      value={studentForm.name}
-                      onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="student-email">Email</Label>
-                    <Input
-                      id="student-email"
-                      type="email"
-                      value={studentForm.email}
-                      onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="student-password">Senha</Label>
-                    <Input
-                      id="student-password"
-                      type="password"
-                      value={studentForm.password}
-                      onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="student-class">Código da Turma</Label>
-                    <Input
-                      id="student-class"
-                      value={studentForm.classCode}
-                      onChange={(e) => setStudentForm({ ...studentForm, classCode: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Cadastrar Aluno
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="classrooms">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cadastro de Turmas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleClassroomSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="classroom-name">Nome da Turma</Label>
-                    <Input
-                      id="classroom-name"
-                      value={classroomForm.name}
-                      onChange={(e) => setClassroomForm({ ...classroomForm, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="classroom-password">Código da Turma</Label>
-                    <Input
-                      id="classroom-password"
-                      value={classroomForm.password}
-                      onChange={(e) => setClassroomForm({ ...classroomForm, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Cadastrar Turma
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="list-teachers">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Professores Cadastrados ({teachers.length})</CardTitle>
+                <Button onClick={() => setCreateTeacherModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Professor
+                </Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -300,6 +156,7 @@ export const Admin = () => {
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Data de Criação</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -309,6 +166,24 @@ export const Admin = () => {
                         <TableCell>{teacher.name}</TableCell>
                         <TableCell>{teacher.email}</TableCell>
                         <TableCell>{teacher.createdAt || 'N/A'}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleEditUser(teacher)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => openDeleteDialog(teacher)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -324,8 +199,12 @@ export const Admin = () => {
 
           <TabsContent value="list-students">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Alunos Cadastrados ({students.length})</CardTitle>
+                <Button onClick={() => setCreateStudentModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Aluno
+                </Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -337,6 +216,7 @@ export const Admin = () => {
                       <TableHead>Turma</TableHead>
                       <TableHead>Pontuação</TableHead>
                       <TableHead>Data de Criação</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -348,6 +228,24 @@ export const Admin = () => {
                         <TableCell>{student.classCode}</TableCell>
                         <TableCell>{student.score}</TableCell>
                         <TableCell>{student.createdAt || 'N/A'}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleEditUser(student)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => openDeleteDialog(student)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -363,8 +261,12 @@ export const Admin = () => {
 
           <TabsContent value="list-classrooms">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Turmas Cadastradas ({classrooms.length})</CardTitle>
+                <Button onClick={() => setCreateClassroomModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Turma
+                </Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -401,6 +303,61 @@ export const Admin = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Modals */}
+        <CreateUserModal
+          open={createTeacherModal}
+          onOpenChange={setCreateTeacherModal}
+          userType="teacher"
+          onSuccess={loadData}
+        />
+        
+        <CreateUserModal
+          open={createStudentModal}
+          onOpenChange={setCreateStudentModal}
+          userType="student"
+          onSuccess={loadData}
+        />
+        
+        <CreateClassroomModal
+          open={createClassroomModal}
+          onOpenChange={setCreateClassroomModal}
+          onSuccess={loadData}
+        />
+        
+        <EditUserModal
+          open={editUserModal}
+          onOpenChange={setEditUserModal}
+          user={selectedUser}
+          onSuccess={loadData}
+        />
+
+        {/* Delete Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir {userToDelete?.role === "teacher" ? "o professor" : "o aluno"} {userToDelete?.name}?
+                Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (userToDelete) {
+                    handleDeleteUser(userToDelete.id);
+                    setDeleteDialogOpen(false);
+                    setUserToDelete(null);
+                  }
+                }}
+              >
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
