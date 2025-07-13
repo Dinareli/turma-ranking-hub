@@ -23,7 +23,7 @@ export const Dashboard: React.FC = () => {
   }
 
   const userPosition =
-    classStudents.findIndex((student) => student.id === user.id) + 1;
+    classStudents.findIndex((student) => student.studentId === Number(user.id)) + 1;
   const totalStudents = classStudents.length;
 
   const handleLogout = () => {
@@ -109,7 +109,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Ranking Table */}
-        <RankingTable students={classStudents} currentUser={user} />
+        <RankingTable rankings={classStudents} currentUser={user} />
       </div>
       
       {/* Botão de criar turma apenas para professores */}

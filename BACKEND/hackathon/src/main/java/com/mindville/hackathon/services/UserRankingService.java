@@ -5,6 +5,7 @@ import com.mindville.hackathon.models.UserRanking;
 import com.mindville.hackathon.repositories.UserRankingRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,10 +14,12 @@ public class UserRankingService {
 
     private final UserRankingRepository repository;
     private final ClassroomService classroomService;
+    private final UserService userService;
 
-    public UserRankingService(UserRankingRepository repository, ClassroomService classroomService) {
+    public UserRankingService(UserRankingRepository repository, ClassroomService classroomService, UserService userService) {
         this.repository = repository;
         this.classroomService = classroomService;
+        this.userService = userService;
     }
 
     public List<UserRankingDTO> getAll() {
@@ -28,9 +31,22 @@ public class UserRankingService {
     }
 
     public List<UserRankingDTO> getRankingTable(Long classroomId) {
-        return repository.findByClassroomId(classroomId).stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        List<UserRanking> lista = repository.findByClassroomId(classroomId);
+        List<UserRankingDTO> dtos = new ArrayList<>();
+        for (UserRanking user : lista) {
+            UserRankingDTO dto = new UserRankingDTO();
+            dto.setId(user.getId());
+            dto.setStudentId(user.getStudentId());
+            dto.setClassroomId(user.getClassroomId());
+            dto.setWeeklyPoints(user.getWeeklyPoints());
+            dto.setGeneralPoints(user.getGeneralPoints());
+            dto.setStudentName(userService.getUserById(user.getStudentId()).name());
+            dtos.add(dto);
+        }
+
+
+        return dtos;
+
     }
 
     public UserRankingDTO create(UserRankingDTO dto) {
