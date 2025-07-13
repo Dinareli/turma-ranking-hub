@@ -3,7 +3,7 @@
   "name": "Minha Extensão",
   "description": "Uma extensão simples do Chrome",
   "version": "1.0",
-  "permissions": ["storage"],
+  "permissions": ["storage" ,"tabs", "activeTab", "scripting"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -16,5 +16,8 @@
     "16": "icon.png",
     "48": "icon.png",
     "128": "icon.png"
-  }
+  },
+  "host_permissions": [
+    "https://www.youtube.com/"
+  ]
 }
