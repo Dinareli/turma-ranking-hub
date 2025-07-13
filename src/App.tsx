@@ -9,6 +9,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { Profile } from "./pages/Profile";
 import CreateClass from "./pages/CreateClass";
 import NotFound from "./pages/NotFound";
+import { Admin } from "./pages/Admin";
+import { Teacher } from "./pages/Teacher";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,14 @@ const TeacherRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const { user } = useAuth();
   if (!user) return <Navigate to="/" replace />;
   if (user.role !== "teacher") return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+};
+
+// Admin Only Route Component
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/" replace />;
+  if (user.role !== "admin") return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 };
 
@@ -52,6 +62,16 @@ const AppRoutes = () => (
     <Route path="/create-class" element={
       <TeacherRoute>
         <CreateClass />
+      </TeacherRoute>
+    } />
+    <Route path="/admin" element={
+      <AdminRoute>
+        <Admin />
+      </AdminRoute>
+    } />
+    <Route path="/teacher" element={
+      <TeacherRoute>
+        <Teacher />
       </TeacherRoute>
     } />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
