@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { classroomApi, Classroom } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
-import { Eye, ArrowLeft, LogOut, Plus } from "lucide-react";
+import { Eye, LogOut, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -28,9 +28,6 @@ export const Teacher = () => {
   const [createStudentModal, setCreateStudentModal] = useState(false);
   const [createClassroomModal, setCreateClassroomModal] = useState(false);
 
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
 
   const handleLogout = () => {
     logout();
@@ -74,11 +71,7 @@ export const Teacher = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="outline" onClick={handleBack}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
+          <div className="flex justify-end items-center mb-4">
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Sair

@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { api, classroomApi, Classroom } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
-import { ArrowLeft, LogOut, Plus, Pencil, Trash2 } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CreateUserModal } from "@/components/CreateUserModal";
 import { CreateClassroomModal } from "@/components/CreateClassroomModal";
@@ -120,9 +120,6 @@ export const Admin = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
 
   const handleLogout = () => {
     logout();
@@ -148,11 +145,7 @@ export const Admin = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="outline" onClick={handleBack}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
+          <div className="flex justify-end items-center mb-4">
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Sair
