@@ -9,11 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { classroomApi } from "@/lib/api";
 
-interface CreateClassroomProps {
-    teacherId: string;
-}
-
-const CreateClass: React.FC<CreateClassroomProps> = () => {
+const CreateClass: React.FC = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [className, setClassName] = useState("");

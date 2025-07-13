@@ -51,7 +51,7 @@ const AppRoutes = () => (
     } />
     <Route path="/create-class" element={
       <TeacherRoute>
-        <CreateClass teacherId={""} />
+        <CreateClass />
       </TeacherRoute>
     } />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
