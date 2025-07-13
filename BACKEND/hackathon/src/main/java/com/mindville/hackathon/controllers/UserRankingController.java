@@ -30,6 +30,12 @@ public class UserRankingController {
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{classroomId}")
+    public ResponseEntity<List<UserRankingDTO>> getRankingTable(@PathVariable Long id) {
+        List<UserRankingDTO> dtos = service.getRankingTable(id);
+        return ResponseEntity.ok(dtos);
+    }
+
     @PostMapping
     public ResponseEntity<UserRankingDTO> create(@RequestBody UserRankingDTO dto) {
         return ResponseEntity.ok(service.create(dto));

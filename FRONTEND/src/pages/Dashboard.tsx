@@ -35,6 +35,10 @@ export const Dashboard: React.FC = () => {
     navigate("/profile");
   };
 
+  const createNewClass = () => {
+    navigate("/create-class");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-card">
       <div className="container mx-auto px-4 py-8">
@@ -106,6 +110,11 @@ export const Dashboard: React.FC = () => {
 
         {/* Ranking Table */}
         <RankingTable students={classStudents} currentUser={user} />
+      </div>
+      <div className="fixed bottom-4 right-4">
+        <Button onClick={createNewClass} className="bg-primary text-white">
+          Criar Nova Turma
+        </Button>
       </div>
     </div>
   );

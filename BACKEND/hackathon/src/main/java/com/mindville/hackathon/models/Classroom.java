@@ -21,6 +21,8 @@ public class Classroom {
 
     private Long teacherId;
 
+    private Long studentId;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -78,5 +80,11 @@ public class Classroom {
 
     public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
+    }
+    public Long getStudentId() {
+        return studentId;
+    }
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 }

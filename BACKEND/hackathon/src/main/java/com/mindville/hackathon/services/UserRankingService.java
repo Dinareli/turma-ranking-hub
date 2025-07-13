@@ -25,6 +25,12 @@ public class UserRankingService {
         return repository.findById(id).map(this::toDTO).orElse(null);
     }
 
+    public List<UserRankingDTO> getRankingTable(Long classroomId) {
+        return repository.findByClassroomId(classroomId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public UserRankingDTO create(UserRankingDTO dto) {
         UserRanking entity = toEntity(dto);
         return toDTO(repository.save(entity));
