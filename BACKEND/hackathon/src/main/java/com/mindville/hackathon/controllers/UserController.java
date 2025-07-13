@@ -13,7 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "chrome-extension://ponmklobmponmoimengmopfjbmcjnegd",
+})
 public class UserController {
 
     @Autowired

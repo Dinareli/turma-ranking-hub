@@ -9,7 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/classrooms")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "chrome-extension://ponmklobmponmoimengmopfjbmcjnegd",
+})
 public class ClassroomController {
 
     private final ClassroomService service;

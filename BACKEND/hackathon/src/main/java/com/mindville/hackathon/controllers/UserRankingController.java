@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/user-rankings")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "chrome-extension://ponmklobmponmoimengmopfjbmcjnegd",
+})
 public class UserRankingController {
 
     private final UserRankingService service;
@@ -56,7 +59,7 @@ public class UserRankingController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/add-point")
+    @PutMapping("/{id}/add-point")
     public ResponseEntity<UserRanking> addWeeklyPoint(@PathVariable Long id) {
         UserRanking updated = service.incrementWeeklyPoints(id);
         return ResponseEntity.ok(updated);
