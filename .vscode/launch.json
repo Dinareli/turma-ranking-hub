@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-HackathonApplication<hackathon>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.mindville.hackathon.HackathonApplication",
+      "projectName": "hackathon",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

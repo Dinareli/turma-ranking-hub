@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
-import { RegisterForm as RegisterFormType } from '@/types/auth';
-import { Loader2, UserPlus } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { RegisterForm as RegisterFormType } from "@/types/auth";
+import { Loader2, UserPlus } from "lucide-react";
 
 interface RegisterFormProps {
   onSuccess: () => void;
@@ -14,10 +20,10 @@ interface RegisterFormProps {
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
   const { register } = useAuth();
   const [formData, setFormData] = useState<RegisterFormType>({
-    name: '',
-    email: '',
-    password: '',
-    classCode: 'TURMA123', // Default value as requested
+    name: "",
+    email: "",
+    password: "",
+    classCode: "TURMA123", // Default value as requested
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<RegisterFormType>>({});
@@ -26,23 +32,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     const newErrors: Partial<RegisterFormType> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
+      newErrors.name = "Nome é obrigatório";
     }
 
     if (!formData.email) {
-      newErrors.email = 'E-mail é obrigatório';
+      newErrors.email = "E-mail é obrigatório";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'E-mail inválido';
+      newErrors.email = "E-mail inválido";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Senha é obrigatória';
+      newErrors.password = "Senha é obrigatória";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+      newErrors.password = "Senha deve ter pelo menos 6 caracteres";
     }
 
     if (!formData.classCode.trim()) {
-      newErrors.classCode = 'Código da turma é obrigatório';
+      newErrors.classCode = "Código da turma é obrigatório";
     }
 
     setErrors(newErrors);
@@ -51,7 +57,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -60,22 +66,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         formData.name.trim(),
         formData.email,
         formData.password,
-        formData.classCode.trim().toUpperCase()
+        formData.classCode.trim().toUpperCase(),
+        { role: "student" } // Added role parameter
       );
       if (success) {
         onSuccess();
       }
     } catch (error) {
-      console.error('Register error:', error);
+      console.error("Register error:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: keyof RegisterFormType, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -98,8 +105,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
               type="text"
               placeholder="Seu nome completo"
               value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              className={errors.name ? 'border-destructive' : ''}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              className={errors.name ? "border-destructive" : ""}
             />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name}</p>
@@ -113,8 +120,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
               type="email"
               placeholder="seu@email.com"
               value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              className={errors.email ? 'border-destructive' : ''}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              className={errors.email ? "border-destructive" : ""}
             />
             {errors.email && (
               <p className="text-sm text-destructive">{errors.email}</p>
@@ -128,8 +135,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
               type="password"
               placeholder="••••••••"
               value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              className={errors.password ? 'border-destructive' : ''}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              className={errors.password ? "border-destructive" : ""}
             />
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password}</p>
@@ -143,8 +150,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
               type="text"
               placeholder="TURMA123"
               value={formData.classCode}
-              onChange={(e) => handleInputChange('classCode', e.target.value.toUpperCase())}
-              className={errors.classCode ? 'border-destructive' : ''}
+              onChange={(e) =>
+                handleInputChange("classCode", e.target.value.toUpperCase())
+              }
+              className={errors.classCode ? "border-destructive" : ""}
             />
             {errors.classCode && (
               <p className="text-sm text-destructive">{errors.classCode}</p>
@@ -162,7 +171,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
             ) : (
               <UserPlus className="mr-2 h-4 w-4" />
             )}
-            {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+            {isLoading ? "Cadastrando..." : "Cadastrar"}
           </Button>
         </form>
       </CardContent>

@@ -1,31 +1,38 @@
-import React from 'react';
-import { useAuth, useClassRanking } from '@/contexts/AuthContext';
-import { RankingTable } from '@/components/RankingTable';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, Trophy, Users, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useAuth, useClassRanking } from "@/contexts/AuthContext";
+import { RankingTable } from "@/components/RankingTable";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { LogOut, User, Trophy, Users, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const classStudents = useClassRanking(user?.classCode || '');
+  const classStudents = useClassRanking(user?.classCode || "");
 
   if (!user) {
-    navigate('/');
+    navigate("/");
     return null;
   }
 
-  const userPosition = classStudents.findIndex(student => student.id === user.id) + 1;
+  const userPosition =
+    classStudents.findIndex((student) => student.id === user.id) + 1;
   const totalStudents = classStudents.length;
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate("/profile");
   };
 
   return (
@@ -70,20 +77,22 @@ export const Dashboard: React.FC = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sua Pontuação</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Sua Pontuação
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{user.score}</div>
-              <p className="text-xs text-muted-foreground">
-                pontos acumulados
-              </p>
+              <p className="text-xs text-muted-foreground">pontos acumulados</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Alunos</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total de Alunos
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
