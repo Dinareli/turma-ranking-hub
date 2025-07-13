@@ -36,7 +36,9 @@ export const Dashboard: React.FC = () => {
   };
 
   const createNewClass = () => {
-    navigate("/create-class");
+    if (user.role === "teacher") {
+      navigate("/create-class");
+    }
   };
 
   return (
@@ -111,11 +113,13 @@ export const Dashboard: React.FC = () => {
         {/* Ranking Table */}
         <RankingTable students={classStudents} currentUser={user} />
       </div>
-      <div className="fixed bottom-4 right-4">
-        <Button onClick={createNewClass} className="bg-primary text-white">
-          Criar Nova Turma
-        </Button>
-      </div>
+      {user.role === "teacher" && (
+        <div className="fixed bottom-4 right-4">
+          <Button onClick={createNewClass} className="bg-primary text-white">
+            Criar Nova Turma
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

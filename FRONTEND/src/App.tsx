@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Auth } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import { Profile } from "./pages/Profile";
+import CreateClass from "./pages/CreateClass";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,6 +16,14 @@ const queryClient = new QueryClient();
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   return user ? <>{children}</> : <Navigate to="/" replace />;
+};
+
+// Teacher Only Route Component
+const TeacherRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/" replace />;
+  if (user.role !== "teacher") return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
 };
 
 // Public Route Component (redirect to dashboard if logged in)
@@ -39,6 +48,11 @@ const AppRoutes = () => (
       <ProtectedRoute>
         <Profile />
       </ProtectedRoute>
+    } />
+    <Route path="/create-class" element={
+      <TeacherRoute>
+        <CreateClass teacherId={""} />
+      </TeacherRoute>
     } />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
