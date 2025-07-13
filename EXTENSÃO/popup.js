@@ -4,16 +4,10 @@ chrome.storage.local.get("value", function (result) {
       const tab = tabs[0];
       const url = tab.url;
 
-      if (url && url.includes("mbanobrainer.com")) {
-        fetch(`http://localhost:8080/api/user-rankings/${result.value}/add-point`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-        })
-          .then(res => res.json())
-          .then(data => document.getElementById("container").innerHTML = `Bem vindo a plataforma <button id="logoutBtn">Sair</button>`)
-          .catch(err => document.getElementById("container").innerHTML = `Usuário não está em um ranking. Vá a plataforma para participar de uma`);
+      if (url && !url.includes("mbanobrainer.com")) {
+        document.getElementById("container").innerHTML = `Site não compatível com ferramenta<button id="logoutBtn">Sair</button>`
       }else {
-        document.getElementById("container").innerHTML = `Site não compatível com ferramenta`
+        document.getElementById("container").innerHTML = `Aproveite as funcionalidades da ferramenta<button id="logoutBtn">Sair</button>`
       }
     })
   }
@@ -42,19 +36,36 @@ document.getElementById("loginBtn").addEventListener("click", () => {
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      chrome.storage.local.remove("value", () => {
-        document.getElementById("container").innerHTML = `
-          <input type="text" id="email">
-          <input type="password" id="password">
-          <button id="loginBtn">Acessar</button>
-          <div id="output"></div>
-        `;
-        window.close()
-      });
+
+document.addEventListener("click", (event) => {
+  if (event.target && event.target.id === "logoutBtn") {
+    chrome.storage.local.remove("value", () => {
+      document.getElementById("container").innerHTML = `
+        <label>Email</label>
+        <input type="text" id="email" placeholder="johndoe@gmail.com">
+        <label>Senha</label>
+        <input type="password" id="password" placeholder="********">
+        <button id="loginBtn">Acessar</button>
+        <div id="output"></div>
+      `;
+      window.close();
     });
   }
 });
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   const logoutBtn = document.getElementById("logoutBtn");
+//   if (logoutBtn) {
+//     logoutBtn.addEventListener("click", () => {
+//       chrome.storage.local.remove("value", () => {
+//         document.getElementById("container").innerHTML = `
+//           <input type="text" id="email">
+//           <input type="password" id="password">
+//           <button id="loginBtn">Acessar</button>
+//           <div id="output"></div>
+//         `;
+//         window.close()
+//       });
+//     });
+//   }
+// });
