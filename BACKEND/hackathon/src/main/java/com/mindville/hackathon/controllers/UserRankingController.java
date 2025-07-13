@@ -45,4 +45,10 @@ public class UserRankingController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/add-point")
+    public ResponseEntity<UserRanking> addWeeklyPoint(@PathVariable Long id) {
+        UserRanking updated = service.incrementWeeklyPoints(id);
+        return ResponseEntity.ok(updated);
+    }
 }

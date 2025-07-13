@@ -63,4 +63,14 @@ public class UserRankingService {
         entity.setGeneralPoints(dto.getGeneralPoints());
         return entity;
     }
+
+    public UserRanking incrementWeeklyPoints(Long id) {
+        UserRanking userRanking = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("UserRanking not found"));
+
+        int currentPoints = userRanking.getWeeklyPoints() != null ? userRanking.getWeeklyPoints() : 0;
+        userRanking.setWeeklyPoints(currentPoints + 1);
+
+        return repository.save(userRanking);
+    }
 }
